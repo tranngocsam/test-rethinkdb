@@ -1,0 +1,30 @@
+<%
+  require "csv" 
+  @results = [@results] unless @results.kind_of?(Array)
+  result = @results.first
+
+  if result
+    if result.class.respond_to?(:csv_headers)
+      headers = result.class.csv_headers
+    elsif result.kind_of?(Hash)
+      headers = result.keys
+    end 
+  end
+
+  @headers ||= headers
+%>
+<%= CSV.generate_line(@headers) if @headers.present? %>
+<%- @results.each do |result| -%>
+  <%
+    if result.respond_to?(:to_csv)
+      row = result.to_csv
+    elsif result.kind_of?(Hash)
+      row = result.values
+    elsif result.kind_of?(Array)
+      row = result
+    else
+      raise :invalid_row
+    end
+  %>
+  <%= CSV.generate_line(row) %>
+<%- end -%>

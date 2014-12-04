@@ -1,0 +1,29 @@
+@results = [@results] unless @results.kind_of?(Array)
+result = @results.first
+if result
+  if result.class.respond_to?(:xlsx_headers)
+    headers = result.class.xlsx_headers
+  elsif result.kind_of?(Hash)
+    headers = result.keys
+  end 
+end
+
+@headers ||= headers
+
+wb = xlsx_package.workbook
+wb.add_worksheet(name: "Sheet1") do |sheet|
+  sheet.add_row @headers if @headers.present?
+  @results.each do |result|
+    if result.kind_of?(Array)
+      row = result.kind_of?(Array)
+    elsif result.kind_of?(Hash)
+      row = result.values
+    elsif result.respond_to?(:to_xlsx)
+      row = result.to_xlsx
+    else
+      raise :unexpected_row
+    end
+
+    sheet.add_row(row)
+  end
+end

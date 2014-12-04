@@ -1,0 +1,17 @@
+common_attr: &common_attr
+  rethinkdb_url: rethinkdb://localhost/nb_app_development
+  api:
+    allowed_origins: "*"
+
+development:
+  <<: *common_attr
+test:
+  <<: *common_attr
+  rethinkdb_url: rethinkdb://localhost/nb_app_test
+
+production:
+  <<: *common_attr
+  api:
+    allowed_origins: 
+      - https://my-app.herokuapp.com
+
